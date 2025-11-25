@@ -1,7 +1,7 @@
 {
   "name": "svg-icon",
-  "description": "Angular 19 component and service for inlining SVGs allowing them to be easily styled with CSS.",
-  "version": "19.1.1",
+  "description": "Angular 21 component and service for inlining SVGs allowing them to be easily styled with CSS.",
+  "version": "21.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/czeckd/angular-svg-icon.git"
@@ -19,37 +19,36 @@
     "dist": "ng build --configuration production angular-svg-icon && cp README.md LICENSE ./dist/angular-svg-icon/",
     "test": "ng test --source-map=false angular-svg-icon",
     "coverage": "ng test --code-coverage angular-svg-icon",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^19.0.0",
-    "@angular/common": "^19.0.0",
-    "@angular/compiler": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/forms": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0",
-    "@angular/platform-browser-dynamic": "^19.0.0",
-    "@angular/router": "^19.0.0",
-    "rxjs": "~6.6.3",
-    "tslib": "^2.3.1",
-    "zone.js": "~0.15.0"
+    "@angular/animations": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/platform-browser-dynamic": "^21.0.0",
+    "@angular/router": "^21.0.0",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1",
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.0.0",
-    "@angular/cli": "^19.0.0",
-    "@angular/compiler-cli": "^19.0.0",
-    "@types/jasmine": "~4.0.0",
-    "@types/node": "^12.11.1",
-    "jasmine-core": "~4.1.0",
-    "karma": "~6.3.0",
-    "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage": "~2.2.0",
+    "@angular-devkit/build-angular": "^21.0.0",
+    "@angular/cli": "^21.0.0",
+    "@angular/compiler-cli": "^21.0.0",
+    "@types/jasmine": "~5.1.13",
+    "@types/node": "^24.10.1",
+    "jasmine-core": "~5.12.1",
+    "karma": "~6.4.4",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
     "karma-coverage-istanbul-reporter": "^3.0.3",
-    "karma-jasmine": "~5.0.0",
-    "karma-jasmine-html-reporter": "~1.7.0",
-    "ng-packagr": "^19.0.0",
-    "typescript": "~5.6.3"
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^21.0.0",
+    "typescript": "~5.9.3"
   }
 }
