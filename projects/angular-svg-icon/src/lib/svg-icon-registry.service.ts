@@ -1,7 +1,7 @@
 import { Injectable, InjectionToken, Optional, SkipSelf, inject } from '@angular/core';
 
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, share, tap } from 'rxjs/operators';
+import { Observable, of as observableOf, throwError as observableThrowError } from 'rxjs';
+import { catchError, finalize, map, share, tap } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
 import { SvgLoader } from './svg-loader';
 
@@ -38,7 +38,7 @@ export class SvgIconRegistryService {
 		}
 
 		if (this.iconsByUrl.has(name)) {
-			return of(this.iconsByUrl.get(name));
+			return observableOf(this.iconsByUrl.get(name));
 		} else if (this.iconsLoadingByUrl.has(name)) {
 			return this.iconsLoadingByUrl.get(name);
 		}
@@ -54,7 +54,7 @@ export class SvgIconRegistryService {
 			}),
 			catchError(err => {
 				console.error(err);
-				return throwError(() => err);
+				return observableThrowError(err);
 			}),
 			share()
 		) as Observable<SVGElement>;
@@ -66,11 +66,11 @@ export class SvgIconRegistryService {
 	/** Get loaded SVG from registry by name. (also works by url because of blended map) */
 	getSvgByName(name: string): Observable<SVGElement|undefined> | undefined {
 		if (this.iconsByUrl.has(name)) {
-			return of(this.iconsByUrl.get(name));
+			return observableOf(this.iconsByUrl.get(name));
 		} else if (this.iconsLoadingByUrl.has(name)) {
 			return this.iconsLoadingByUrl.get(name);
 		}
-		return throwError(() => `No svg with name '${name}' has been loaded`);
+		return observableThrowError(`No svg with name '${name}' has been loaded`);
 	}
 
 	/** Remove a SVG from the registry by URL (or name). */
