@@ -26,28 +26,30 @@ export class SvgIconComponent implements OnDestroy {
 	private renderer = inject(Renderer2);
 	private iconReg = inject(SvgIconRegistryService);
 
-	src = input<string>();
-	name = input<string>();
-	stretch = input(false);
-	applyClass = input(false);
-	svgClass = input<any>();
-	klass = input<any>(undefined, {alias: 'class'});
-	viewBox = input<string>();
-	svgAriaLabel = input<string>();
-	onSVGLoaded = input<(svg: SVGElement, parent: HTMLElement) => SVGElement>();
-	svg = signal(0);
+	src = input<string | undefined>(undefined);
+	name = input<string | undefined>(undefined);
+	stretch = input<boolean>(false);
+	applyClass = input<boolean>(false);
+	svgClass = input<string | string[] | undefined>(undefined);
+	klass = input<string | string[] | undefined>(undefined, {alias: 'class'});
+	viewBox = input<string | undefined>(undefined);
+	svgAriaLabel = input<string | undefined>(undefined);
+	onSVGLoaded = input<((svg: SVGElement, parent: HTMLElement) => SVGElement) | undefined>(undefined);
+	svg = signal<number>(0);
 
 	// Adapted from ngStyle (see:  angular/packages/common/src/directives/ng_style.ts)
-	svgStyle = input<{[klass: string]: any }|null>();
+	svgStyle = input<{[klass: string]: any } | null | undefined>(null);
 
 	private helper = new SvgIconHelper();
 
 	constructor() {
 		// Watch for src or name changes
 		effect(() => {
-			if (this.src() || this.name()) {
+			const srcValue = this.src();
+			const nameValue = this.name();
+			if (srcValue || nameValue) {
 				this.destroy();
-				this.init(this.src(), this.name());
+				this.init(srcValue, nameValue);
 			}
 		});
 
@@ -55,7 +57,7 @@ export class SvgIconComponent implements OnDestroy {
 		effect(() => {
 			const viewBox = this.viewBox();
 			if (!this.svg()) return;
-			this.updateViewBox(viewBox);
+			this.updateViewBox(viewBox ?? undefined);
 		});
 
 		// Watch for style changes
@@ -69,35 +71,40 @@ export class SvgIconComponent implements OnDestroy {
 		effect(() => {
 			const _ = this.svg();
 			if (this.applyClass()) {
-				this.setClass(this.elemSvg, null, this.klass());
+				this.setClass(this.elemSvg, null, this.klass() ?? null);
 			} else {
-				this.setClass(this.elemSvg, this.klass(), null);
+				this.setClass(this.elemSvg, this.klass() ?? null, null);
 			}
 		});
 
 		// Watch for svgClass changes
-		let previousSvgClass: string|string[]|null;
+		let previousSvgClass: string|string[]|null = null;
 		effect(() => {
 			const _ = this.svg();
-			this.setClass(this.elemSvg, previousSvgClass, this.svgClass());
-			previousSvgClass = this.svgClass();
+			const currentSvgClass = this.svgClass() ?? null;
+			this.setClass(this.elemSvg, previousSvgClass, currentSvgClass);
+			previousSvgClass = currentSvgClass;
 		});
 
 		// Watch for klass changes
-		let previousKlass: string|string[]|null;
+		let previousKlass: string|string[]|null = null;
 		effect(() => {
 			const _ = this.svg();
 			const elem = this.element.nativeElement;
-			this.setClass(elem, previousKlass, this.klass());
+			const currentKlass = this.klass() ?? null;
+			this.setClass(elem, previousKlass, currentKlass);
 
-			this.setClass(this.elemSvg, previousKlass, this.applyClass() ? this.klass() : null);
-			previousKlass = this.klass();
+			this.setClass(this.elemSvg, previousKlass, this.applyClass() ? currentKlass : null);
+			previousKlass = currentKlass;
 		});
 
 		// Watch for svgAriaLabel changes
 		effect(() => {
 			const _ = this.svg();
-			this.doAria(this.svgAriaLabel()!);
+			const label = this.svgAriaLabel();
+			if (label !== undefined) {
+				this.doAria(label);
+			}
 		});
 
 		// Watch for stretch changes
@@ -115,7 +122,7 @@ export class SvgIconComponent implements OnDestroy {
 		return this.element.nativeElement.firstChild;
 	}
 
-	private init(src?: string, name?: string) {
+	private init(src?: string | undefined, name?: string | undefined) {
 		if (src && name) {
 			const svgObs = this.iconReg.loadSvg(src, name);
 			if (svgObs) {
@@ -155,7 +162,7 @@ export class SvgIconComponent implements OnDestroy {
 			this.helper.svg = svg;
 			let icon = svg.cloneNode(true) as SVGElement;
 			const elem = this.element.nativeElement;
-			const onLoadCallback = this?.onSVGLoaded();
+			const onLoadCallback = this.onSVGLoaded();
 			if (onLoadCallback) {
 				icon = onLoadCallback(icon, elem);
 			}
@@ -168,7 +175,7 @@ export class SvgIconComponent implements OnDestroy {
 		}
 	}
 
-	private updateViewBox(viewBox?: string) {
+	private updateViewBox(viewBox?: string | undefined) {
 		if (viewBox) {
 			const icon = this.elemSvg;
 			if (viewBox === 'auto') {
@@ -261,7 +268,7 @@ export class SvgIconComponent implements OnDestroy {
 		}
 	}
 
-	private doAria(label: string) {
+	private doAria(label: string | undefined) {
     if (label !== undefined) {
   		const svg = this.element.nativeElement.firstChild;
 	  	// If there is not a svgAriaLabel and the SVG has an arial-label, then do not override
